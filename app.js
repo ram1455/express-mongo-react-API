@@ -4,7 +4,7 @@ const app = express()
 const productV2 = require('./app/product-v2/router')
 const logger = require('morgan')
 const path = require('path')
-let port = 3306;
+let port = process.env.PORT || 3306;
 
 // app.use(path, middleware)
 app.use(logger('dev'));
