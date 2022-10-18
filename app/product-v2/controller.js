@@ -1,7 +1,7 @@
 const Product = require('./model')
 const path = require('path')
 const fs = require('fs')
-const {Op} = require('sequelize')
+const {Op, where} = require('sequelize')
 let port = process.env.PORT || 3306; 
 
 const index = async (req,res)=>{
@@ -64,8 +64,9 @@ const store = async (req,res)=> {
         fs.renameSync(image.path, fixImage)
         try {
             await Product.sync();
-            await Product.create({users_id, name, price, stock, status, image_url: `http://localhost:${port}/public/${image.originalname}`})
-            const result = await Product.findAll()
+            
+            const result = await Product.create({users_id, name, price, stock, status, image_url: `http://localhost:${port}/public/${image.originalname}`})
+            res.status(201) 
             res.send(result)
         } catch (error) {
             res.send(error)
@@ -88,10 +89,15 @@ const update = async (req,res)=>{
     if (image) {
         const fixImage = path.join(__dirname, '../../uploads', image.originalname)
         fs.renameSync(image.path, fixImage)
+        
         await Product.update({users_id, name, price, stock, status, image_url: `http://localhost:${port}/public/${image.originalname}`},{where : {
             id : req.params.id
         }})
-        const result = await Product.findAll()
+
+        const result = await Product.findAll({
+            attributes:['id','users_id','name','price','stock','status','image_url'],
+            where:{id : req.params.id}
+        })
         res.send(result)
     } else{
         await Product.update({users_id, name, price, stock, status},{where : {
@@ -107,7 +113,13 @@ const destroy = async (req,res)=>{
         await Product.destroy({where: {
             id: req.params.id
         }})
-        let result = await Product.findAll()
+        await Product.findAll({where: {
+            id: req.params.id
+        }}) 
+        
+        let result = [{
+            data : ` data with ID:${req.params.id} has been deleted`
+        }]
         res.send(result)
     } catch (error) {
         res.send(error)
