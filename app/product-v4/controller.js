@@ -9,7 +9,7 @@ const index = (req,res) => {
     .then( result => res.send(result))
     .catch( error => res.send(error))
 }
-
+ 
 const view = (req,res) => {
     const {id} = req.params
     Product.findById({_id: ObjectId(id)})
@@ -33,9 +33,7 @@ const store = (req,res)=> {
         Product.create({name, price, stock, status})
         .then( result => res.send(result))
         .catch( error => res.send(error))
-
     }
-
 }
 
 const update = (req, res) => {
@@ -63,7 +61,7 @@ const destroy = (req,res) => {
     Product.deleteOne({_id: ObjectId(id)})
     .then( result => res.send([result, {message: `Documents with _id: ${id} have been deleted`}]))
     .catch( error => res.send(error))
-}
+} 
 
 module.exports = {
     index,

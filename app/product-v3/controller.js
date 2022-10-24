@@ -28,7 +28,7 @@ const store =  (req, res)=>{
     const { name, price, status, stock} = req.body
 
     if (image) {
-        const fixImage = path.join(__dirname, '../../uploads', image.originalname)
+        const fixImage = path.join(__dirname, '../../uploads', image.originalname);
         fs.renameSync(image.path, fixImage)
 
         db.collection('products').insertOne({ name, price, status, stock, image_url:`http://localhost:${port}/public/${image.originalname}`})
